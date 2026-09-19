@@ -2,8 +2,8 @@
 
 > **Project:** SmartSplit - Expense Splitting Application  
 > **Frontend Stack:** React 19, Vite 8, React Router 7, Axios, Tailwind CSS v4, Lucide Icons  
-> **Backend Integration:** Spring Boot 3 REST APIs (JWT Auth, PostgreSQL, RabbitMQ)  
-> **Current Branch:** `feature/task1-setup`  
+> **Backend Integration:** Spring Boot 3 REST APIs (JWT Auth, PostgreSQL, RabbitMQ, Native CORS)  
+> **Current Branch:** `feature/task2-auth-api`  
 > **Last Updated:** 2026-09-19  
 
 ---
@@ -13,15 +13,15 @@
 | Phase | Description | Total Tasks | Completed | Status |
 | :--- | :--- | :---: | :---: | :---: |
 | **Phase 1** | Project Setup, Routing & Styling | 3 | 3 | 🟢 Completed |
-| **Phase 2** | API Client & Auth Context | 3 | 0 | 🟡 Next Up |
-| **Phase 3** | Authentication Pages (Signup & Login) | 2 | 0 | 🟡 Pending |
-| **Phase 4** | Dashboard & App Layout Shell | 2 | 0 | 🟡 Pending |
+| **Phase 2** | API Client & Auth Context | 3 | 3 | 🟢 Completed |
+| **Phase 3** | Authentication Pages (Signup & Login) | 2 | 2 | 🟢 Completed |
+| **Phase 4** | Dashboard & App Layout Shell | 2 | 0 | 🟡 Next Up |
 | **Phase 5** | Group Management & Members | 4 | 0 | 🟡 Pending |
 | **Phase 6** | Expense Management & Split Calculation | 3 | 0 | 🟡 Pending |
 | **Phase 7** | Balances & Simplified Settlements | 3 | 0 | 🟡 Pending |
 | **Phase 8** | Notification Center & Activity Feed | 2 | 0 | 🟡 Pending |
 | **Phase 9** | End-to-End Verification & Polish | 2 | 0 | 🟡 Pending |
-| **Total** | | **24** | **3** | **12.5% Completed** |
+| **Total** | | **24** | **8** | **33.3% Completed** |
 
 ---
 
@@ -33,41 +33,44 @@
   - [x] Install `axios` (HTTP client with interceptors)
   - [x] Install `lucide-react` (icon set)
   - [x] Setup modern styling with Tailwind CSS v4 (`tailwindcss`, `@tailwindcss/vite`)
-- [x] **Task 1.2: Configure Vite Dev Server & Proxy**
-  - [x] Setup proxy in `vite.config.js` (`/api` and `/groups` $\to$ `http://localhost:8080`) to bypass CORS in development
-  - [x] Configure Tailwind CSS plugin in `vite.config.js`
+- [x] **Task 1.2: Backend CORS & API Unification**
+  - [x] Enable native CORS support in Spring Boot `SecurityConfig.java` for `http://localhost:5173`
+  - [x] Unify `BalanceController` under `@RequestMapping("/api/groups/{groupId}")`
+  - [x] Configure frontend `baseURL` directly to `http://localhost:8080`
 - [x] **Task 1.3: Environment Configuration**
-  - [x] Create `.env` and `.env.example` with `VITE_API_BASE_URL`
+  - [x] Create `.env` and `.env.example` with `VITE_API_BASE_URL=http://localhost:8080`
   - [x] Update `.gitignore` to safely exclude `.env` files
 
 ---
 
 ### Phase 2: API Client & Auth Context
-- [ ] **Task 2.1: Centralized Axios Client (`src/services/api.js`)**
-  - [ ] Request interceptor to automatically attach `Authorization: Bearer <token>`
-  - [ ] Response interceptor for global 401 Unauthorized handling (auto-logout / redirect)
-  - [ ] Error parsing helper for friendly error messages
-- [ ] **Task 2.2: Authentication Context (`src/context/AuthContext.jsx`)**
-  - [ ] State: `currentUser`, `token`, `isAuthenticated`, `isLoading`
-  - [ ] Actions: `login(email, password)`, `register(name, email, password)`, `logout()`
-  - [ ] Auto-load user profile (`GET /api/users/me`) on app mount if token exists in `localStorage`
-- [ ] **Task 2.3: Route Guards (`src/components/ProtectedRoute.jsx`)**
-  - [ ] Protected route wrapper for authenticated pages
-  - [ ] Public route wrapper (redirects authenticated users away from Login/Register)
+- [x] **Task 2.1: Centralized Axios Client (`src/services/api.js`)**
+  - [x] Request interceptor to automatically attach `Authorization: Bearer <token>`
+  - [x] Response interceptor for global 401 Unauthorized handling (auto-logout / session cleanup)
+  - [x] Error parsing helper for friendly error messages from Spring Boot exceptions
+  - [x] Auth service (`src/services/authService.js`) handling signup and plain-text JWT token responses
+  - [x] User service (`src/services/userService.js`) handling `/api/users/me` and `/api/users/by-email`
+- [x] **Task 2.2: Authentication Context (`src/context/AuthContext.jsx`)**
+  - [x] State: `currentUser`, `token`, `isAuthenticated`, `isLoading`
+  - [x] Actions: `login(email, password)`, `register(name, email, password)`, `logout()`
+  - [x] Auto-load user profile (`GET /api/users/me`) on app mount if token exists in `localStorage`
+- [x] **Task 2.3: Route Guards (`src/components/common/ProtectedRoute.jsx`, `PublicRoute.jsx`)**
+  - [x] Protected route wrapper with loading state indicator
+  - [x] Public route wrapper (redirects authenticated users away from Login/Register to Dashboard)
 
 ---
 
 ### Phase 3: Authentication Pages (Signup & Login)
-- [ ] **Task 3.1: Register Page (`src/pages/Register.jsx`)**
-  - [ ] Form inputs: `name`, `email`, `password`
-  - [ ] API integration: `POST /api/auth/signup`
-  - [ ] Validation and error messages (e.g., 409 conflict if email exists)
-  - [ ] Success state & redirect to Login
-- [ ] **Task 3.2: Login Page (`src/pages/Login.jsx`)**
-  - [ ] Form inputs: `email`, `password`
-  - [ ] API integration: `POST /api/auth/login` (parse plain-text JWT token)
-  - [ ] Post-login profile retrieval via `GET /api/users/me`
-  - [ ] Navigation to `/dashboard` upon successful login
+- [x] **Task 3.1: Register Page (`src/pages/Register.jsx`)**
+  - [x] Form inputs: `name`, `email`, `password`
+  - [x] API integration: `POST /api/auth/signup` via `authService.signup`
+  - [x] Validation and friendly error messages
+  - [x] Success state banner & auto-redirect to Login
+- [x] **Task 3.2: Login Page (`src/pages/Login.jsx`)**
+  - [x] Form inputs: `email`, `password`
+  - [x] API integration: `POST /api/auth/login` (parse plain-text JWT token)
+  - [x] Post-login profile retrieval via `GET /api/users/me`
+  - [x] Navigation to `/dashboard` (or previous protected route) upon successful login
 
 ---
 
@@ -128,9 +131,9 @@
 
 ### Phase 7: Balances & Simplified Settlements
 - [ ] **Task 7.1: Balance Service (`src/services/balanceService.js`)**
-  - [ ] `getGroupBalances(groupId)`: `GET /groups/{groupId}/balances`
-  - [ ] `getUserBalance(groupId, userId)`: `GET /groups/{groupId}/balances/{userId}`
-  - [ ] `getGroupSettlements(groupId)`: `GET /groups/{groupId}/settlements`
+  - [ ] `getGroupBalances(groupId)`: `GET /api/groups/{groupId}/balances`
+  - [ ] `getUserBalance(groupId, userId)`: `GET /api/groups/{groupId}/balances/{userId}`
+  - [ ] `getGroupSettlements(groupId)`: `GET /api/groups/{groupId}/settlements`
 - [ ] **Task 7.2: Group Balances View**
   - [ ] Visual cards showing who is owed money (green) and who owes money (red)
 - [ ] **Task 7.3: Simplified Settlements View**
@@ -151,8 +154,8 @@
 ---
 
 ### Phase 9: End-to-End Verification & Polish
-- [ ] **Task 9.1: CORS & Dev Proxy Validation**
-  - [ ] Ensure all API endpoints work seamlessly without browser CORS blocks
+- [ ] **Task 9.1: CORS Validation**
+  - [ ] Ensure direct browser calls to `http://localhost:8080/api/*` succeed with CORS headers
 - [ ] **Task 9.2: Complete User Journey Test**
   - [ ] User A registers & logs in
   - [ ] User A creates "Trip to Goa" group
