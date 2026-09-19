@@ -2,7 +2,7 @@
 
 > **Project:** SmartSplit - Expense Splitting Application  
 > **Frontend Stack:** React 19, Vite 8, React Router 7, Axios, Tailwind CSS v4, Lucide Icons  
-> **Backend Integration:** Spring Boot 3 REST APIs (JWT Auth, PostgreSQL, RabbitMQ)  
+> **Backend Integration:** Spring Boot 3 REST APIs (JWT Auth, PostgreSQL, RabbitMQ, Native CORS)  
 > **Current Branch:** `feature/task2-auth-api`  
 > **Last Updated:** 2026-09-19  
 
@@ -33,11 +33,12 @@
   - [x] Install `axios` (HTTP client with interceptors)
   - [x] Install `lucide-react` (icon set)
   - [x] Setup modern styling with Tailwind CSS v4 (`tailwindcss`, `@tailwindcss/vite`)
-- [x] **Task 1.2: Configure Vite Dev Server & Proxy**
-  - [x] Setup proxy in `vite.config.js` (`/api` and `/groups` $\to$ `http://localhost:8080`) to bypass CORS in development
-  - [x] Configure Tailwind CSS plugin in `vite.config.js`
+- [x] **Task 1.2: Backend CORS & API Unification**
+  - [x] Enable native CORS support in Spring Boot `SecurityConfig.java` for `http://localhost:5173`
+  - [x] Unify `BalanceController` under `@RequestMapping("/api/groups/{groupId}")`
+  - [x] Configure frontend `baseURL` directly to `http://localhost:8080`
 - [x] **Task 1.3: Environment Configuration**
-  - [x] Create `.env` and `.env.example` with `VITE_API_BASE_URL`
+  - [x] Create `.env` and `.env.example` with `VITE_API_BASE_URL=http://localhost:8080`
   - [x] Update `.gitignore` to safely exclude `.env` files
 
 ---
@@ -130,9 +131,9 @@
 
 ### Phase 7: Balances & Simplified Settlements
 - [ ] **Task 7.1: Balance Service (`src/services/balanceService.js`)**
-  - [ ] `getGroupBalances(groupId)`: `GET /groups/{groupId}/balances`
-  - [ ] `getUserBalance(groupId, userId)`: `GET /groups/{groupId}/balances/{userId}`
-  - [ ] `getGroupSettlements(groupId)`: `GET /groups/{groupId}/settlements`
+  - [ ] `getGroupBalances(groupId)`: `GET /api/groups/{groupId}/balances`
+  - [ ] `getUserBalance(groupId, userId)`: `GET /api/groups/{groupId}/balances/{userId}`
+  - [ ] `getGroupSettlements(groupId)`: `GET /api/groups/{groupId}/settlements`
 - [ ] **Task 7.2: Group Balances View**
   - [ ] Visual cards showing who is owed money (green) and who owes money (red)
 - [ ] **Task 7.3: Simplified Settlements View**
@@ -153,8 +154,8 @@
 ---
 
 ### Phase 9: End-to-End Verification & Polish
-- [ ] **Task 9.1: CORS & Dev Proxy Validation**
-  - [ ] Ensure all API endpoints work seamlessly without browser CORS blocks
+- [ ] **Task 9.1: CORS Validation**
+  - [ ] Ensure direct browser calls to `http://localhost:8080/api/*` succeed with CORS headers
 - [ ] **Task 9.2: Complete User Journey Test**
   - [ ] User A registers & logs in
   - [ ] User A creates "Trip to Goa" group
