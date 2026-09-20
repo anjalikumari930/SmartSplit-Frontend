@@ -2,7 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { groupService } from '../services/groupService'
+import { expenseService } from '../services/expenseService'
 import { AddMemberModal } from '../components/groups/AddMemberModal'
+import { AddExpenseModal } from '../components/expense/AddExpenseModal'
+import { ExpenseList } from '../components/expense/ExpenseList'
 import {
   Users,
   ArrowLeft,
@@ -10,12 +13,12 @@ import {
   Trash2,
   LogOut,
   Shield,
-  User,
   Calendar,
   Receipt,
   Scale,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Plus
 } from 'lucide-react'
 
 export const GroupDetails = () => {
@@ -25,22 +28,27 @@ export const GroupDetails = () => {
 
   const [group, setGroup] = useState(null)
   const [members, setMembers] = useState([])
-  const [activeTab, setActiveTab] = useState('members') // 'members', 'expenses', 'balances'
+  const [expenses, setExpenses] = useState([])
+  const [activeTab, setActiveTab] = useState('expenses') // default to expenses
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+  
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false)
+  const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
 
   const loadData = useCallback(async () => {
     setIsLoading(true)
     setError(null)
     try {
-      const [groupData, membersData] = await Promise.all([
+      const [groupData, membersData, expensesData] = await Promise.all([
         groupService.getGroupDetails(groupId),
         groupService.getGroupMembers(groupId),
+        expenseService.getGroupExpenses(groupId),
       ])
       setGroup(groupData)
       setMembers(membersData)
+      setExpenses(expensesData)
     } catch (err) {
       setError(err.message || 'Failed to load group details.')
     } finally {
@@ -103,11 +111,15 @@ export const GroupDetails = () => {
     }
   }
 
+  const handleExpenseDeleted = (deletedId) => {
+    setExpenses((prev) => prev.filter((e) => e.id !== deletedId))
+  }
+
   if (isLoading) {
     return (
       <div className="p-16 flex flex-col items-center justify-center gap-3 text-slate-400">
         <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
-        <p className="text-sm font-medium">Loading group details from SmartSplit backend...</p>
+        <p className="text-sm font-medium">Loading group and expense details from SmartSplit backend...</p>
       </div>
     )
   }
@@ -162,6 +174,10 @@ export const GroupDetails = () => {
               <span className="flex items-center gap-1">
                 <Users className="w-3.5 h-3.5" /> {members.length} member{members.length === 1 ? '' : 's'}
               </span>
+              <span>•</span>
+              <span className="flex items-center gap-1">
+                <Receipt className="w-3.5 h-3.5" /> {expenses.length} expense{expenses.length === 1 ? '' : 's'}
+              </span>
             </p>
           </div>
         </div>
@@ -169,8 +185,16 @@ export const GroupDetails = () => {
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
           <button
-            onClick={() => setIsAddMemberModalOpen(true)}
+            onClick={() => setIsAddExpenseModalOpen(true)}
             className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20 cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add Expense</span>
+          </button>
+
+          <button
+            onClick={() => setIsAddMemberModalOpen(true)}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold text-xs rounded-xl border border-slate-700 transition-colors cursor-pointer"
           >
             <UserPlus className="w-3.5 h-3.5" />
             <span>Add Member</span>
@@ -203,10 +227,22 @@ export const GroupDetails = () => {
       {/* Tabs Navigation */}
       <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
         <button
+          onClick={() => setActiveTab('expenses')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
+            activeTab === 'expenses'
+              ? 'bg-indigo-600 text-white shadow-md'
+              : 'text-slate-400 hover:text-white hover:bg-slate-800'
+          }`}
+        >
+          <Receipt className="w-4 h-4" />
+          <span>Expenses ({expenses.length})</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('members')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
             activeTab === 'members'
-              ? 'bg-indigo-600 text-white'
+              ? 'bg-indigo-600 text-white shadow-md'
               : 'text-slate-400 hover:text-white hover:bg-slate-800'
           }`}
         >
@@ -215,22 +251,10 @@ export const GroupDetails = () => {
         </button>
 
         <button
-          onClick={() => setActiveTab('expenses')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
-            activeTab === 'expenses'
-              ? 'bg-indigo-600 text-white'
-              : 'text-slate-400 hover:text-white hover:bg-slate-800'
-          }`}
-        >
-          <Receipt className="w-4 h-4" />
-          <span>Expenses</span>
-        </button>
-
-        <button
           onClick={() => setActiveTab('balances')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer ${
             activeTab === 'balances'
-              ? 'bg-indigo-600 text-white'
+              ? 'bg-indigo-600 text-white shadow-md'
               : 'text-slate-400 hover:text-white hover:bg-slate-800'
           }`}
         >
@@ -239,7 +263,32 @@ export const GroupDetails = () => {
         </button>
       </div>
 
-      {/* Tab 1: Members */}
+      {/* Tab 1: Expenses */}
+      {activeTab === 'expenses' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+              Group Expenses
+            </h3>
+            <button
+              onClick={() => setIsAddExpenseModalOpen(true)}
+              className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1 cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" /> Add Expense
+            </button>
+          </div>
+
+          <ExpenseList
+            expenses={expenses}
+            members={members}
+            currentUserId={currentUser?.id}
+            onAddExpenseClick={() => setIsAddExpenseModalOpen(true)}
+            onExpenseDeleted={handleExpenseDeleted}
+          />
+        </div>
+      )}
+
+      {/* Tab 2: Members */}
       {activeTab === 'members' && (
         <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between">
@@ -298,19 +347,6 @@ export const GroupDetails = () => {
         </div>
       )}
 
-      {/* Tab 2: Expenses (Placeholder for Phase 6) */}
-      {activeTab === 'expenses' && (
-        <div className="bg-slate-900/40 border border-dashed border-slate-800 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3">
-          <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            <Receipt className="w-6 h-6" />
-          </div>
-          <h3 className="text-base font-bold text-white">Expense Tracking</h3>
-          <p className="text-xs text-slate-400 max-w-sm">
-            Ready for Phase 6. You will be able to log shared expenses, select EQUAL, EXACT, or PERCENTAGE splits, and track receipts.
-          </p>
-        </div>
-      )}
-
       {/* Tab 3: Balances & Settlements (Placeholder for Phase 7) */}
       {activeTab === 'balances' && (
         <div className="bg-slate-900/40 border border-dashed border-slate-800 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3">
@@ -330,6 +366,15 @@ export const GroupDetails = () => {
         isOpen={isAddMemberModalOpen}
         onClose={() => setIsAddMemberModalOpen(false)}
         onMemberAdded={loadData}
+      />
+
+      {/* Add Expense Modal */}
+      <AddExpenseModal
+        groupId={groupId}
+        members={members}
+        isOpen={isAddExpenseModalOpen}
+        onClose={() => setIsAddExpenseModalOpen(false)}
+        onExpenseAdded={loadData}
       />
     </div>
   )
