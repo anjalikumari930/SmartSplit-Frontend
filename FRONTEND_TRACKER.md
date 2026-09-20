@@ -3,7 +3,7 @@
 > **Project:** SmartSplit - Expense Splitting Application  
 > **Frontend Stack:** React 19, Vite 8, React Router 7, Axios, Tailwind CSS v4, Lucide Icons  
 > **Backend Integration:** Spring Boot 3 REST APIs (JWT Auth, PostgreSQL, RabbitMQ, Native CORS)  
-> **Current Branch:** `feature/task2-auth-api`  
+> **Current Branch:** `feature/task3-dashboard-groups`  
 > **Last Updated:** 2026-09-19  
 
 ---
@@ -15,13 +15,13 @@
 | **Phase 1** | Project Setup, Routing & Styling | 3 | 3 | 🟢 Completed |
 | **Phase 2** | API Client & Auth Context | 3 | 3 | 🟢 Completed |
 | **Phase 3** | Authentication Pages (Signup & Login) | 2 | 2 | 🟢 Completed |
-| **Phase 4** | Dashboard & App Layout Shell | 2 | 0 | 🟡 Next Up |
-| **Phase 5** | Group Management & Members | 4 | 0 | 🟡 Pending |
-| **Phase 6** | Expense Management & Split Calculation | 3 | 0 | 🟡 Pending |
+| **Phase 4** | Dashboard & App Layout Shell | 2 | 2 | 🟢 Completed |
+| **Phase 5** | Group Management & Members | 4 | 4 | 🟢 Completed |
+| **Phase 6** | Expense Management & Split Calculation | 3 | 0 | 🟡 Next Up |
 | **Phase 7** | Balances & Simplified Settlements | 3 | 0 | 🟡 Pending |
 | **Phase 8** | Notification Center & Activity Feed | 2 | 0 | 🟡 Pending |
 | **Phase 9** | End-to-End Verification & Polish | 2 | 0 | 🟡 Pending |
-| **Total** | | **24** | **8** | **33.3% Completed** |
+| **Total** | | **24** | **14** | **58.3% Completed** |
 
 ---
 
@@ -48,7 +48,7 @@
   - [x] Request interceptor to automatically attach `Authorization: Bearer <token>`
   - [x] Response interceptor for global 401 Unauthorized handling (auto-logout / session cleanup)
   - [x] Error parsing helper for friendly error messages from Spring Boot exceptions
-  - [x] Auth service (`src/services/authService.js`) handling signup and plain-text JWT token responses
+  - [x] Auth service (`src/services/authService.js`) handling signup and JSON token responses
   - [x] User service (`src/services/userService.js`) handling `/api/users/me` and `/api/users/by-email`
 - [x] **Task 2.2: Authentication Context (`src/context/AuthContext.jsx`)**
   - [x] State: `currentUser`, `token`, `isAuthenticated`, `isLoading`
@@ -68,45 +68,47 @@
   - [x] Success state banner & auto-redirect to Login
 - [x] **Task 3.2: Login Page (`src/pages/Login.jsx`)**
   - [x] Form inputs: `email`, `password`
-  - [x] API integration: `POST /api/auth/login` (parse plain-text JWT token)
+  - [x] API integration: `POST /api/auth/login` (parse JSON `{ token: "..." }`)
   - [x] Post-login profile retrieval via `GET /api/users/me`
   - [x] Navigation to `/dashboard` (or previous protected route) upon successful login
 
 ---
 
 ### Phase 4: Dashboard & Layout Shell
-- [ ] **Task 4.1: App Layout Shell (`src/components/layout/Navbar.jsx`, `Sidebar.jsx`)**
-  - [ ] Top navbar showing logged-in user profile & avatar
-  - [ ] Notification bell icon with unread count indicator
-  - [ ] Logout button with confirmation
-- [ ] **Task 4.2: Dashboard Home (`src/pages/Dashboard.jsx`)**
-  - [ ] Summary cards: Total amount you are owed (Green) vs. Total amount you owe (Orange/Red)
-  - [ ] List of user groups with quick navigation
-  - [ ] "Create New Group" quick action modal trigger
+- [x] **Task 4.1: App Layout Shell (`src/components/layout/Navbar.jsx`, `AppLayout.jsx`)**
+  - [x] Top navbar showing logged-in user profile, avatar, and navigation links
+  - [x] Quick logout action button
+  - [x] Shared layout container wrapping protected routes
+- [x] **Task 4.2: Dashboard Home (`src/pages/Dashboard.jsx`)**
+  - [x] Metric cards: Active groups, Total you are owed, Total you owe
+  - [x] Dynamic list of user groups fetched via `groupService.getUserGroups()`
+  - [x] Empty state illustration and "Create Your First Group" CTA
+  - [x] Quick action modal trigger to create new groups
 
 ---
 
 ### Phase 5: Group Management & Members
-- [ ] **Task 5.1: Group Service (`src/services/groupService.js`)**
-  - [ ] `getUserGroups()`: `GET /api/groups`
-  - [ ] `createGroup(name)`: `POST /api/groups`
-  - [ ] `getGroupDetails(id)`: `GET /api/groups/{id}`
-  - [ ] `getGroupMembers(id)`: `GET /api/groups/{id}/members`
-  - [ ] `addMember(groupId, userId)`: `POST /api/groups/{groupId}/members`
-  - [ ] `removeMember(groupId, memberId)`: `DELETE /api/groups/{groupId}/members/{memberId}`
-  - [ ] `leaveGroup(groupId)`: `POST /api/groups/{groupId}/leave`
-  - [ ] `deleteGroup(groupId)`: `DELETE /api/groups/{groupId}`
-- [ ] **Task 5.2: Create Group Modal**
-  - [ ] Modal input for group name with validation
-  - [ ] Submission to `POST /api/groups` and list refresh
-- [ ] **Task 5.3: Group Details Page (`src/pages/GroupDetails.jsx`)**
-  - [ ] Group header with group name, admin status, and leave/delete controls
-  - [ ] Tabs: **Expenses**, **Balances & Settlements**, **Members**
-- [ ] **Task 5.4: Members Management Component**
-  - [ ] List current members with role badge (`ADMIN` / `MEMBER`)
-  - [ ] Search user by email via `GET /api/users/by-email?email=...`
-  - [ ] Add user to group via `POST /api/groups/{groupId}/members`
-  - [ ] Admin ability to remove members
+- [x] **Task 5.1: Group Service (`src/services/groupService.js`)**
+  - [x] `getUserGroups()`: `GET /api/groups`
+  - [x] `createGroup(name)`: `POST /api/groups`
+  - [x] `getGroupDetails(id)`: `GET /api/groups/{id}`
+  - [x] `getGroupMembers(id)`: `GET /api/groups/{id}/members`
+  - [x] `addMember(groupId, userId)`: `POST /api/groups/{groupId}/members`
+  - [x] `removeMember(groupId, memberId)`: `DELETE /api/groups/{groupId}/members/{memberId}`
+  - [x] `leaveGroup(groupId)`: `POST /api/groups/{groupId}/leave`
+  - [x] `deleteGroup(groupId)`: `DELETE /api/groups/{groupId}`
+- [x] **Task 5.2: Create Group Modal (`src/components/groups/CreateGroupModal.jsx`)**
+  - [x] Modal input with 3-50 character validation
+  - [x] Submits to `POST /api/groups`, refreshes dashboard, and redirects to new group
+- [x] **Task 5.3: Group Details Page (`src/pages/GroupDetails.jsx`)**
+  - [x] Header card with group name, admin badge, member count, and created date
+  - [x] Tab navigation: **Members**, **Expenses**, **Balances & Settlements**
+  - [x] Admin-only group deletion and member leave actions
+- [x] **Task 5.4: Members Management Component (`src/components/groups/AddMemberModal.jsx`)**
+  - [x] Search user by email via `GET /api/users/by-email?email=...`
+  - [x] Add user to group via `POST /api/groups/{groupId}/members`
+  - [x] Member list with `ADMIN` and `MEMBER` badges
+  - [x] Admin ability to remove members
 
 ---
 
