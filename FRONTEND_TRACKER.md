@@ -3,8 +3,8 @@
 > **Project:** SmartSplit - Expense Splitting Application  
 > **Frontend Stack:** React 19, Vite 8, React Router 7, Axios, Tailwind CSS v4, Lucide Icons  
 > **Backend Integration:** Spring Boot 3 REST APIs (JWT Auth, PostgreSQL, RabbitMQ, Native CORS)  
-> **Current Branch:** `feature/task3-dashboard-groups`  
-> **Last Updated:** 2026-09-19  
+> **Current Branch:** `feature/task4-expenses`  
+> **Last Updated:** 2026-09-20  
 
 ---
 
@@ -17,11 +17,11 @@
 | **Phase 3** | Authentication Pages (Signup & Login) | 2 | 2 | 🟢 Completed |
 | **Phase 4** | Dashboard & App Layout Shell | 2 | 2 | 🟢 Completed |
 | **Phase 5** | Group Management & Members | 4 | 4 | 🟢 Completed |
-| **Phase 6** | Expense Management & Split Calculation | 3 | 0 | 🟡 Next Up |
-| **Phase 7** | Balances & Simplified Settlements | 3 | 0 | 🟡 Pending |
+| **Phase 6** | Expense Management & Split Calculation | 3 | 3 | 🟢 Completed |
+| **Phase 7** | Balances & Simplified Settlements | 3 | 0 | 🟡 Next Up |
 | **Phase 8** | Notification Center & Activity Feed | 2 | 0 | 🟡 Pending |
 | **Phase 9** | End-to-End Verification & Polish | 2 | 0 | 🟡 Pending |
-| **Total** | | **24** | **14** | **58.3% Completed** |
+| **Total** | | **24** | **17** | **70.8% Completed** |
 
 ---
 
@@ -113,21 +113,22 @@
 ---
 
 ### Phase 6: Expense Management & Split Calculation
-- [ ] **Task 6.1: Expense Service (`src/services/expenseService.js`)**
-  - [ ] `getGroupExpenses(groupId)`: `GET /api/groups/{groupId}/expenses`
-  - [ ] `createExpense(expenseData)`: `POST /api/expenses`
-  - [ ] `updateExpense(id, expenseData)`: `PUT /api/expenses/{id}`
-  - [ ] `deleteExpense(id)`: `DELETE /api/expenses/{id}`
-- [ ] **Task 6.2: Add Expense Modal (`src/components/expense/AddExpenseModal.jsx`)**
-  - [ ] Form fields: Description, total amount, payer dropdown (`paidByUserId`)
-  - [ ] Split type selector:
-    - [ ] `EQUAL`: Auto-calculates equal split among selected members
-    - [ ] `EXACT`: Custom values per user with total validation (`sum === total`)
-    - [ ] `PERCENTAGE`: Custom percentage per user with 100% validation (`sum === 100`)
-  - [ ] Payload construction matching `ExpenseRequest`
-- [ ] **Task 6.3: Group Expense Feed Component**
-  - [ ] Chronological expense items with date, payer, amount, and your share
-  - [ ] Delete/edit expense buttons with confirmation
+- [x] **Task 6.1: Expense Service (`src/services/expenseService.js`)**
+  - [x] `getGroupExpenses(groupId)`: `GET /api/groups/{groupId}/expenses`
+  - [x] `createExpense(expenseData)`: `POST /api/expenses`
+  - [x] `updateExpense(id, expenseData)`: `PUT /api/expenses/{id}`
+  - [x] `deleteExpense(id)`: `DELETE /api/expenses/{id}`
+- [x] **Task 6.2: Add Expense Modal (`src/components/expense/AddExpenseModal.jsx`)**
+  - [x] Form fields: Description, total amount, payer dropdown (`paidByUserId`)
+  - [x] Split type selector:
+    - [x] `EQUAL`: Auto-calculates equal split among selected members
+    - [x] `EXACT`: Custom values per user with total validation (`sum === total`)
+    - [x] `PERCENTAGE`: Custom percentage per user with 100% validation (`sum === 100`)
+  - [x] Payload construction matching `ExpenseRequest`
+- [x] **Task 6.3: Group Expense Feed Component (`src/components/expense/ExpenseList.jsx`)**
+  - [x] Chronological expense items with date, payer, amount, and your share
+  - [x] Expandable participant split breakdown
+  - [x] Delete expense button with confirmation
 
 ---
 
