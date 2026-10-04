@@ -3,8 +3,8 @@
 > **Project:** SmartSplit - Expense Splitting Application  
 > **Frontend Stack:** React 19, Vite 8, React Router 7, Axios, Tailwind CSS v4, Lucide Icons  
 > **Backend Integration:** Spring Boot 3 REST APIs (JWT Auth, PostgreSQL, RabbitMQ, Native CORS)  
-> **Current Branch:** `feature/task5-balances-settlements`  
-> **Last Updated:** 2026-09-20  
+> **Current Branch:** `feature/task6-notifications`  
+> **Last Updated:** 2026-10-04  
 
 ---
 
@@ -19,9 +19,9 @@
 | **Phase 5** | Group Management & Members | 4 | 4 | 🟢 Completed |
 | **Phase 6** | Expense Management & Split Calculation | 3 | 3 | 🟢 Completed |
 | **Phase 7** | Balances & Simplified Settlements | 3 | 3 | 🟢 Completed |
-| **Phase 8** | Notification Center & Activity Feed | 2 | 0 | 🟡 Next Up |
-| **Phase 9** | End-to-End Verification & Polish | 2 | 0 | 🟡 Pending |
-| **Total** | | **24** | **20** | **83.3% Completed** |
+| **Phase 8** | Notification Center & Activity Feed | 2 | 2 | 🟢 Completed |
+| **Phase 9** | End-to-End Verification & Polish | 2 | 0 | 🟡 Next Up |
+| **Total** | | **24** | **22** | **91.7% Completed** |
 
 ---
 
@@ -150,14 +150,15 @@
 ---
 
 ### Phase 8: Notification Center
-- [ ] **Task 8.1: Notification Service (`src/services/notificationService.js`)**
-  - [ ] `getUserNotifications(page, size)`: `GET /api/notifications`
-  - [ ] `markAsRead(id)`: `PATCH /api/notifications/{id}/read`
-  - [ ] `markAllAsRead()`: `PATCH /api/notifications/read-all`
-- [ ] **Task 8.2: Notification Dropdown Component**
-  - [ ] Bell icon popup with unread badge counter
-  - [ ] Display event items (member added, expense logged, debt settled)
-  - [ ] Mark single or all notifications as read
+- [x] **Task 8.1: Notification Service (`src/services/notificationService.js`)**
+  - [x] `getUserNotifications(page, size)`: `GET /api/notifications`
+  - [x] `markAsRead(id)`: `PATCH /api/notifications/{id}/read`
+  - [x] `markAllAsRead()`: `PATCH /api/notifications/read-all`
+- [x] **Task 8.2: Notification Dropdown Component (`src/components/notifications/NotificationDropdown.jsx`)**
+  - [x] Bell icon in Navbar with live unread counter badge
+  - [x] Contextual event icons (expenses, group members, settlements)
+  - [x] Mark individual or all notifications as read
+  - [x] Relative time formatting and 30-second background polling
 
 ---
 

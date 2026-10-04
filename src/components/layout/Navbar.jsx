@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { Layers, LogOut, LayoutDashboard, Users, Bell } from 'lucide-react'
+import { Layers, LogOut, LayoutDashboard, Users } from 'lucide-react'
+import { NotificationDropdown } from '../notifications/NotificationDropdown'
 
 export const Navbar = () => {
   const { currentUser, logout } = useAuth()
@@ -39,6 +40,9 @@ export const Navbar = () => {
 
         {/* Right side actions & user menu */}
         <div className="flex items-center gap-3">
+          {/* Notifications */}
+          <NotificationDropdown />
+
           {/* User badge */}
           <div className="flex items-center gap-2.5 pl-3 pr-2 py-1 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs">
             <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 text-white font-bold flex items-center justify-center text-xs shadow-inner">
