@@ -3,7 +3,7 @@
 > **Project:** SmartSplit - Expense Splitting Application  
 > **Frontend Stack:** React 19, Vite 8, React Router 7, Axios, Tailwind CSS v4, Lucide Icons  
 > **Backend Integration:** Spring Boot 3 REST APIs (JWT Auth, PostgreSQL, RabbitMQ, Native CORS)  
-> **Current Branch:** `feature/task4-expenses`  
+> **Current Branch:** `feature/task5-balances-settlements`  
 > **Last Updated:** 2026-09-20  
 
 ---
@@ -18,10 +18,10 @@
 | **Phase 4** | Dashboard & App Layout Shell | 2 | 2 | 🟢 Completed |
 | **Phase 5** | Group Management & Members | 4 | 4 | 🟢 Completed |
 | **Phase 6** | Expense Management & Split Calculation | 3 | 3 | 🟢 Completed |
-| **Phase 7** | Balances & Simplified Settlements | 3 | 0 | 🟡 Next Up |
-| **Phase 8** | Notification Center & Activity Feed | 2 | 0 | 🟡 Pending |
+| **Phase 7** | Balances & Simplified Settlements | 3 | 3 | 🟢 Completed |
+| **Phase 8** | Notification Center & Activity Feed | 2 | 0 | 🟡 Next Up |
 | **Phase 9** | End-to-End Verification & Polish | 2 | 0 | 🟡 Pending |
-| **Total** | | **24** | **17** | **70.8% Completed** |
+| **Total** | | **24** | **20** | **83.3% Completed** |
 
 ---
 
@@ -133,14 +133,19 @@
 ---
 
 ### Phase 7: Balances & Simplified Settlements
-- [ ] **Task 7.1: Balance Service (`src/services/balanceService.js`)**
-  - [ ] `getGroupBalances(groupId)`: `GET /api/groups/{groupId}/balances`
-  - [ ] `getUserBalance(groupId, userId)`: `GET /api/groups/{groupId}/balances/{userId}`
-  - [ ] `getGroupSettlements(groupId)`: `GET /api/groups/{groupId}/settlements`
-- [ ] **Task 7.2: Group Balances View**
-  - [ ] Visual cards showing who is owed money (green) and who owes money (red)
-- [ ] **Task 7.3: Simplified Settlements View**
-  - [ ] Display Splitwise graph-simplified settlement steps (e.g. *"Alice pays Bob $45.00"*)
+- [x] **Task 7.1: Balance Service (`src/services/balanceService.js`)**
+  - [x] `getGroupBalances(groupId)`: `GET /api/groups/{groupId}/balances`
+  - [x] `getUserBalance(groupId, userId)`: `GET /api/groups/{groupId}/balances/{userId}`
+  - [x] `getGroupSettlements(groupId)`: `GET /api/groups/{groupId}/settlements`
+  - [x] `getUserSettlements(groupId, userId)`: `GET /api/groups/{groupId}/settlements/{userId}`
+- [x] **Task 7.2: Group Balances View (`src/components/balance/GroupBalances.jsx`)**
+  - [x] Visual cards showing who is owed money (green) and who owes money (red)
+  - [x] Prominent net balance status card for current user
+  - [x] Aggregated balance metrics integrated into Dashboard overview cards
+- [x] **Task 7.3: Simplified Settlements View (`src/components/balance/SettlementList.jsx`)**
+  - [x] Display Splitwise graph-simplified settlement steps (e.g. *"Alice pays Bob $45.00"*)
+  - [x] Highlight current user's required payments vs receipts
+  - [x] Celebratory all-settled-up empty state
 
 ---
 

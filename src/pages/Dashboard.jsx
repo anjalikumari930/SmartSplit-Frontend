@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { groupService } from '../services/groupService'
+import { balanceService } from '../services/balanceService'
 import { CreateGroupModal } from '../components/groups/CreateGroupModal'
 import { 
   Users, 
@@ -20,6 +21,8 @@ export const Dashboard = () => {
   const { currentUser } = useAuth()
   const navigate = useNavigate()
   const [groups, setGroups] = useState([])
+  const [totalOwed, setTotalOwed] = useState(0)
+  const [totalOwe, setTotalOwe] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
@@ -30,12 +33,34 @@ export const Dashboard = () => {
     try {
       const data = await groupService.getUserGroups()
       setGroups(data)
+
+      // Fetch user balance for each group to calculate overview statistics
+      if (currentUser?.id && data.length > 0) {
+        const balancePromises = data.map((g) =>
+          balanceService.getUserBalance(g.id, currentUser.id).catch(() => null)
+        )
+        const balanceResults = await Promise.all(balancePromises)
+        let owedSum = 0
+        let oweSum = 0
+        balanceResults.forEach((b) => {
+          if (b && b.balance != null) {
+            const num = Number(b.balance)
+            if (num > 0) owedSum += num
+            else if (num < 0) oweSum += Math.abs(num)
+          }
+        })
+        setTotalOwed(owedSum)
+        setTotalOwe(oweSum)
+      } else {
+        setTotalOwed(0)
+        setTotalOwe(0)
+      }
     } catch (err) {
       setError(err.message || 'Failed to load your groups.')
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [currentUser?.id])
 
   useEffect(() => {
     loadGroups()
@@ -87,7 +112,9 @@ export const Dashboard = () => {
             <span>You Are Owed</span>
             <TrendingUp className="w-4 h-4 text-emerald-400" />
           </div>
-          <p className="text-2xl font-bold text-emerald-400">$0.00</p>
+          <p className="text-2xl font-bold text-emerald-400">
+            ${totalOwed.toFixed(2)}
+          </p>
           <p className="text-[11px] text-slate-500">Calculated across your expenses</p>
         </div>
 
@@ -96,7 +123,9 @@ export const Dashboard = () => {
             <span>You Owe</span>
             <TrendingDown className="w-4 h-4 text-rose-400" />
           </div>
-          <p className="text-2xl font-bold text-rose-400">$0.00</p>
+          <p className="text-2xl font-bold text-rose-400">
+            ${totalOwe.toFixed(2)}
+          </p>
           <p className="text-[11px] text-slate-500">Settlements pending payment</p>
         </div>
       </div>

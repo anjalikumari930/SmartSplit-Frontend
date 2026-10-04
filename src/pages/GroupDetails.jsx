@@ -3,9 +3,12 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { groupService } from '../services/groupService'
 import { expenseService } from '../services/expenseService'
+import { balanceService } from '../services/balanceService'
 import { AddMemberModal } from '../components/groups/AddMemberModal'
 import { AddExpenseModal } from '../components/expense/AddExpenseModal'
 import { ExpenseList } from '../components/expense/ExpenseList'
+import { GroupBalances } from '../components/balance/GroupBalances'
+import { SettlementList } from '../components/balance/SettlementList'
 import {
   Users,
   ArrowLeft,
@@ -29,6 +32,8 @@ export const GroupDetails = () => {
   const [group, setGroup] = useState(null)
   const [members, setMembers] = useState([])
   const [expenses, setExpenses] = useState([])
+  const [balances, setBalances] = useState([])
+  const [settlements, setSettlements] = useState([])
   const [activeTab, setActiveTab] = useState('expenses') // default to expenses
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -41,14 +46,18 @@ export const GroupDetails = () => {
     setIsLoading(true)
     setError(null)
     try {
-      const [groupData, membersData, expensesData] = await Promise.all([
+      const [groupData, membersData, expensesData, balancesData, settlementsData] = await Promise.all([
         groupService.getGroupDetails(groupId),
         groupService.getGroupMembers(groupId),
         expenseService.getGroupExpenses(groupId),
+        balanceService.getGroupBalances(groupId).catch(() => ({ balances: [] })),
+        balanceService.getGroupSettlements(groupId).catch(() => ({ settlements: [] })),
       ])
       setGroup(groupData)
       setMembers(membersData)
       setExpenses(expensesData)
+      setBalances(balancesData?.balances || [])
+      setSettlements(settlementsData?.settlements || [])
     } catch (err) {
       setError(err.message || 'Failed to load group details.')
     } finally {
@@ -113,6 +122,8 @@ export const GroupDetails = () => {
 
   const handleExpenseDeleted = (deletedId) => {
     setExpenses((prev) => prev.filter((e) => e.id !== deletedId))
+    balanceService.getGroupBalances(groupId).then((res) => setBalances(res?.balances || [])).catch(() => {})
+    balanceService.getGroupSettlements(groupId).then((res) => setSettlements(res?.settlements || [])).catch(() => {})
   }
 
   if (isLoading) {
@@ -347,16 +358,11 @@ export const GroupDetails = () => {
         </div>
       )}
 
-      {/* Tab 3: Balances & Settlements (Placeholder for Phase 7) */}
+      {/* Tab 3: Balances & Settlements */}
       {activeTab === 'balances' && (
-        <div className="bg-slate-900/40 border border-dashed border-slate-800 rounded-3xl p-12 text-center flex flex-col items-center justify-center space-y-3">
-          <div className="p-3 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-            <Scale className="w-6 h-6" />
-          </div>
-          <h3 className="text-base font-bold text-white">Smart Debt Simplification</h3>
-          <p className="text-xs text-slate-400 max-w-sm">
-            Ready for Phase 7. SmartSplit will automatically minimize settlement transactions across your group members using your backend graph algorithm.
-          </p>
+        <div className="space-y-8 animate-in fade-in">
+          <GroupBalances balances={balances} members={members} />
+          <SettlementList settlements={settlements} />
         </div>
       )}
 
