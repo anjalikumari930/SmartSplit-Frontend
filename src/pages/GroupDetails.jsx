@@ -270,7 +270,7 @@ export const GroupDetails = () => {
           }`}
         >
           <Scale className="w-4 h-4" />
-          <span>Balances &amp; Settlements</span>
+          <span>Balances &amp; Settlements ({settlements.length})</span>
         </button>
       </div>
 
